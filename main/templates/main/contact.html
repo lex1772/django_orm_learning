@@ -1,35 +1,24 @@
-{% load static %}
+{% extends 'main/base.html' %}
 
-<link
-rel="stylesheet"
-type="text/css"
-href="{% static "css/uikit.css" %}"
-/>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
+{% block content %}
 <body>
-<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
-    <nav class="ms-5">
-        <a class="uk-button uk-button-primary" href="/">Домашняя страница</a>
-        <a class="uk-button uk-button-primary" href="/contact/">Контактная информация</a>
-    </nav>
-</div>
-<form method="post">
-                            {% csrf_token %}
-                            <input name="name" class="form-control mb-2" placeholder="Name" type="text">
-                            <input name="email" class="form-control mb-2" placeholder="Email" type="email">
-                            <textarea name="message" class="form-control mb-2" placeholder="Your message"></textarea>
-                            <input class="btn btn-primary w-100" type="submit" value="Send" />
-                        </form>
-<h1>
-    {% for contact in contacts %}
-    {{contact.name}}
-    {{contact.contact_email}}
-    {% endfor %}
-</h1>
+<form>
+      <div class="mb-sm-3">
+        <label for="exampleInputName" class="form-label">Имя</label>
+        <input type="text" class="form-control" id="exampleInputName">
+      </div>
+      <div class="mb-sm-3">
+        <label for="exampleInputEmail1" class="form-label">Адрес электронной почты</label>
+        <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+        <div id="emailHelp" class="form-text">Мы никогда никому не передадим вашу электронную почту.</div>
+      </div>
+      <div class="mb-sm-3>
+        <label for="exampleInputText" class="form-label">Ваше сообщение</label>
+        <input type="text" class="form-control" id="exampleInputText">
+      </div>
+      <button type="submit" class="btn btn-primary">Отправить</button>
+</form>
 
-</body>
+  </body>
 </html>
+{% endblock %}

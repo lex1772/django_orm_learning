@@ -1,0 +1,16 @@
+from django import template
+from django.utils.html import conditional_escape
+from django.utils.safestring import mark_safe
+
+register = template.Library()
+
+
+@register.simple_tag
+def media_path(string):
+    str_template = "static 'img/{}'".format(string)
+    return mark_safe(f"{{%{str_template}%}}")
+
+
+@register.filter
+def mediapath(text):
+    return mark_safe(f"{{%static 'img/{text}'%}}")

@@ -1,33 +1,39 @@
-{% load static %}
+{% extends 'main/base.html' %}
+{%load static%}
+{%load my_tags%}
 
-<link
-rel="stylesheet"
-type="text/css"
-href="{% static "css/uikit.css" %}"
-/>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
-    <nav class="ms-5">
-        <a class="uk-button uk-button-primary" href="/">Домашняя страница</a>
-        <a class="uk-button uk-button-primary" href="/contact/">Контактная информация</a>
-    </nav>
-</div>
-<div class="uk-child-width-1-2@s uk-light" uk-grid>
-    <div>
-        <div class="uk-background-top-center uk-background-cover uk-height-medium uk-panel uk-flex uk-flex-middle uk-flex-center" style="background-image: url(https://ngcmshak.ru/uploads/dsn/fe/72/001/1587646418_38-p-besshovnie-foni-dlya-saitov-112.jpg);">
-            <p class="uk-h4">
-                {% for product in products %}
-                <span class="uk-margin-small-right" uk-icon="check">{{product.product_name}}</span>
-                {% endfor %}
-            </p>
-        </div>
+{% block content %}
+<main>
+  <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-body-tertiary">
+      <img src="{{ hzS1A2pOleN3w4pviwilvwwCb6vmg08KZlMgiXmi.png|mediapath }}" class="img-fluid"<rect width="20%" height="20%""</rect>
+    {% for product in products %}
+    <div class="col-md-5 p-lg-5 mx-auto my-5">
+      <h1 class="display-4 fw-normal">{{product.product_name}}</h1>
+      <p class="lead fw-normal">{{product.description|truncatechars:100}}.</p>
+      <a class="btn btn-outline-secondary" href="#">Нет в наличии</a>
     </div>
-</div>
-</body>
-</html>
+    {% endfor %}
+  </div>
+    {% include "main/includes/pagination.html" with page=posts %}
+  <form>
+      <div class="mb-sm-3">
+        <h1>Зарегистрировать товар</h1>
+        <label for="product_name" class="form-label">Название</label>
+        <input type="text" class="form-control" id="product_name">
+      </div>
+      <div class="mb-sm-3">
+        <label for="price" class="form-label">Цена</label>
+        <input type="text" class="form-control" id="price">
+      </div>
+      <div class="mb-sm-3">
+        <label for="category" class="form-label">Категория</label>
+        <input type="text" class="form-control" id="category">
+      </div>
+      <div class="mb-sm-3>
+        <label for="description" class="form-label">Описание</label>
+        <input type="text" class="form-control" id="description">
+      </div>
+      <button type="submit" class="btn btn-primary">Отправить</button>
+</form>
+</main>
+{% endblock %}
