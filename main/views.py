@@ -3,9 +3,10 @@ from datetime import datetime
 
 from django.core import serializers
 from django.core.paginator import Paginator, EmptyPage, InvalidPage, PageNotAnInteger
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
-from main.models import Product, Contacts
+from main.models import Product, Contacts, Category
 from .forms import ProductForms
 
 
@@ -28,45 +29,28 @@ def contact(request):
     return render(request, 'main/contact.html', {'contacts': contacts})
 
 
-def post_list(request):
+def index(request):
     object_list = Product.objects.all()[len(Product.objects.all()) - 5:len(Product.objects.all())]
+    page_num = request.GET.get('page', 1)
+
     paginator = Paginator(object_list, 1)
-    page = request.GET.get('page')
+
     try:
-        posts = paginator.page(page)
+        page_obj = paginator.page(page_num)
     except PageNotAnInteger:
-        posts = paginator.page(1)
+        page_obj = paginator.page(1)
     except EmptyPage:
-        posts = paginator.page(paginator.num_pages)
-    return render(request,
-                  'main/home.html',
-                  {'page': page,
-                   'posts': posts})
+        page_obj = paginator.page(paginator.num_pages)
+
+    return render(request, 'main/home.html', {'page_obj': page_obj})
 
 
-def product(request):
-    submitbutton = request.POST.get("submit")
+def add_product(request):
+    product_form = ProductForms(request.POST, request.FILES)
+    if product_form.is_valid():
+        form = product_form.save(commit=False)
+        form.save()
+    else:
+        product_form = ProductForms()
 
-    product_name = ''
-    price = ''
-    category = ''
-    description = ''
-
-    form = ProductForms(request.POST or None)
-    if form.is_valid():
-        product_name = form.cleaned_data.get("product_name")
-        price = form.cleaned_data.get("price")
-        category = form.cleaned_data.get("category")
-        description = form.cleaned_data.get("description")
-        creation_date = datetime.now()
-        last_modified = datetime.now()
-
-    context = {'form': form, 'product_name': product_name,
-               'price': price, 'category': category,
-               'description': description}
-
-    new_product = Product.objects.create(product_name=product_name, price=price, category=category,
-                                         description=description, creation_date=creation_date,
-                                         last_modified=last_modified)
-
-    return render(request, 'main/home.html', context)
+    return render(request, 'main/home.html', {'product_form': product_form})

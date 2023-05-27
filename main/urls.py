@@ -24,5 +24,5 @@ app_name = MainConfig.name
 
 urlpatterns = [
     path('', home, name='home'),
-    path('contact/', contact, name='contact')
+    path('contact/', contact, name='contact'),
 ]

@@ -5,7 +5,7 @@
 {% block content %}
 <main>
   <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-body-tertiary">
-      <img src="{{ hzS1A2pOleN3w4pviwilvwwCb6vmg08KZlMgiXmi.png|mediapath }}" class="img-fluid"<rect width="20%" height="20%""</rect>
+      <img src="{{'hzS1A2pOleN3w4pviwilvwwCb6vmg08KZlMgiXmi.png'|mediapath }}" class="img-fluid"<rect width="20%" height="20%""</rect>
     {% for product in products %}
     <div class="col-md-5 p-lg-5 mx-auto my-5">
       <h1 class="display-4 fw-normal">{{product.product_name}}</h1>
@@ -14,7 +14,7 @@
     </div>
     {% endfor %}
   </div>
-    {% include "main/includes/pagination.html" with page=posts %}
+    {% include "main/includes/pagination.html" %}
   <form>
       <div class="mb-sm-3">
         <h1>Зарегистрировать товар</h1>
