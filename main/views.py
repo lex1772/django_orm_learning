@@ -20,7 +20,16 @@ def home(request):
         form = ProductForms(request.POST, request.FILES)
         if form.is_valid():
             cd = form.cleaned_data
-            product = Product(cd)
+            product_name = cd.get('product_name')
+            description = cd.get('description')
+            image = cd.get('image')
+            category = cd.get('category').lower()
+            price = cd.get('price')
+            cat = Category.objects.get(category=category)
+            creation_date = datetime.now()
+            last_modified = datetime.now()
+            product = Product(product_name=product_name, description=description, image=image, category=cat,
+                              price=price, creation_date=creation_date, last_modified=last_modified)
             product.save()
     page_num = request.GET.get('page', 1)
     paginator = Paginator(products, 1)
