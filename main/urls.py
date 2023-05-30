@@ -18,11 +18,20 @@ Including another URLconf
 from django.urls import path
 
 from main.apps import MainConfig
-from main.views import home, contact
+from main.views import ProductListView, ProductDetailView, ProductCreateView, ProductUpdateView, ProductDeleteView, ContactsCreateView, BlogCreateView, BlogDeleteView, BlogDetailView, BlogUpdateView, BlogListView
 
 app_name = MainConfig.name
 
 urlpatterns = [
-    path('', home, name='home'),
-    path('contact/', contact, name='contact'),
+    path('', ProductListView.as_view(), name='home'),
+    path('contact/', ContactsCreateView.as_view(), name='contact'),
+    path('product/<int:pk>/', ProductDetailView.as_view(), name='product'),
+    path('create/', ProductCreateView.as_view(), name='product_create'),
+    path('update/<int:pk>/', ProductUpdateView.as_view(), name='product_update'),
+    path('delete/<int:pk>/', ProductDeleteView.as_view(), name='product_delete'),
+    path('blog/', BlogListView.as_view(), name='blog'),
+    path('blog/<slug:slug>/', BlogDetailView.as_view(), name='blog_details'),
+    path('blog/create/', BlogCreateView.as_view(), name='blog_create'),
+    path('blog/update/<slug:slug>/', BlogUpdateView.as_view(), name='blog_update'),
+    path('blog/delete/<slug:slug>/', BlogDeleteView.as_view(), name='blog_delete'),
 ]

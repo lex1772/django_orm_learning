@@ -5,55 +5,93 @@ from django.core import serializers
 from django.core.paginator import Paginator, EmptyPage, InvalidPage, PageNotAnInteger
 from django.db.transaction import commit
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.template import RequestContext
+from django.urls import reverse_lazy, reverse
 from django.views.decorators.csrf import csrf_protect
+from django.views import generic
 
-from main.models import Product, Contacts, Category
+from main.models import Product, Contacts, Category, Blog
 from .forms import ProductForms
 
 
 # Create your views here.
-def home(request):
-    try:
-        products = Product.objects.all()[len(Product.objects.all()) - 5:len(Product.objects.all())]
-    except ValueError:
-        products = Product.objects.all()
-    finally:
-        if request.POST:
-            form = ProductForms(request.POST, request.FILES)
-            if form.is_valid():
-                cd = form.cleaned_data
-                product_name = cd.get('product_name')
-                description = cd.get('description')
-                image = cd.get('image')
-                category = cd.get('category').lower()
-                price = cd.get('price')
-                cat = Category.objects.get(category=category)
-                creation_date = datetime.now()
-                last_modified = datetime.now()
-                product = Product(product_name=product_name, description=description, image=image, category=cat,
-                              price=price, creation_date=creation_date, last_modified=last_modified)
-                product.save()
-        page_num = request.GET.get('page', 1)
-        paginator = Paginator(products, 1)
-        try:
-            page_obj = paginator.page(page_num)
-        except PageNotAnInteger:
-            page_obj = paginator.page(1)
-        except EmptyPage:
-            page_obj = paginator.page(paginator.num_pages)
-        for i in products:
-            print(i)
-        return render(request, 'main/home.html', {'products': products, 'page_obj': page_obj, 'form': ProductForms})
+class ProductListView(generic.ListView):
+    model = Product
+    paginate_by = 1
+    extra_context = {
+        'title': 'Продукты'
+    }
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(is_active=True)
+        return queryset
 
 
-def contact(request):
-    contacts = Contacts.objects.all()
-    print(contacts)
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        message = request.POST.get('message')
-        print(f'You have new message from {name}({email}): {message}')
-    return render(request, 'main/contact.html', {'contacts': contacts})
+class ProductDetailView(generic.DetailView):
+    model = Product
+    template_name = 'main/product.html'
+
+
+class ProductCreateView(generic.CreateView):
+    model = Product
+    fields = ("product_name", "description", "category", "price")
+    success_url = reverse_lazy('main:home')
+
+
+class ProductUpdateView(generic.UpdateView):
+    model = Product
+    success_url = reverse_lazy('main:home')
+
+
+class ProductDeleteView(generic.DeleteView):
+    model = Product
+    fields = ("product_name", "description", "category", "price")
+    success_url = reverse_lazy('main:home')
+
+
+class ContactsCreateView(generic.CreateView):
+    model = Contacts
+    fields = ("name", "contact_email", "message")
+    success_url = reverse_lazy('main:home')
+
+
+class BlogListView(generic.ListView):
+    model = Blog
+    paginate_by = 3
+    extra_context = {
+        'title': 'Блог'
+    }
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(likes=True)
+        return queryset
+
+
+class BlogDetailView(generic.DetailView):
+    model = Blog
+    def get_object(self):
+        obj = super().get_object()
+        obj.total_views += 1
+        obj.save()
+        return obj
+
+
+class BlogCreateView(generic.CreateView):
+    model = Blog
+    fields = ("name", "post", "image")
+    success_url = reverse_lazy('main:blog')
+
+
+class BlogUpdateView(generic.UpdateView):
+    model = Blog
+    fields = ("name", "post", "image")
+    success_url = reverse_lazy('main:blog')
+
+
+class BlogDeleteView(generic.DeleteView):
+    model = Blog
+    fields = ("name", "post", "image", "slug")
+    success_url = reverse_lazy('main:blog')

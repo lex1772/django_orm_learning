@@ -1,0 +1,10 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<a class="btn btn-outline-dark" href="{%url 'main:home'%}" role="button">Назад</a>
+<form method="post">
+      {%csrf_token%}
+      Подтверждаете удаление продкута "{{object.product_name}}"?
+      <input type="submit" class="btn btn-outline-danger" value="Подтвердить">
+</form>
+{% endblock %}

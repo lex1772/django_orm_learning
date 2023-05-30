@@ -1,0 +1,10 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+<a class="btn btn-outline-dark" href="{%url 'main:home'%}" role="button">Назад</a>
+<form method="post">
+      {%csrf_token%}
+      {{form.as_p}}
+      <input type="submit" class="btn btn-outline-dark" value="{% if object %}Сохранить{% else %}Зарегистрировать{% endif %}">
+</form>
+{% endblock %}
