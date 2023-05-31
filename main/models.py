@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 from transliterate import slugify
 
 # Create your models here.
@@ -57,7 +58,7 @@ class Blog(models.Model):
     name = models.CharField(max_length=100, verbose_name='заголовок')
     slug = models.CharField(max_length=100, verbose_name='slug')
     post = models.CharField(max_length=100, verbose_name='содержимое')
-    image = models.ImageField(upload_to='products/', verbose_name='изображение', **NULLABLE)
+    image = models.ImageField(upload_to='img/', verbose_name='изображение', **NULLABLE)
     creation_date = models.DateTimeField(auto_now_add=True, verbose_name='дата создания')
     likes = models.BooleanField(default=True, verbose_name='признак публикации')
     total_views = models.IntegerField(default=0, verbose_name='просмотры')
@@ -72,6 +73,9 @@ class Blog(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(str(self.name))
         super().save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse('main:blog', kwargs={'slug': self.slug})
 
 
     class Meta:

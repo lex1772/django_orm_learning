@@ -3,6 +3,7 @@
 {% block content %}
 <a class="btn btn-outline-dark" href="{%url 'main:blog'%}" role="button">Назад</a>
 <p><strong>{{object.name}}</strong></p>
+<img src="{{ MEDIA_URL }}/img/{{ object.image }}">
 <p><em>Просмотров статьи: {{object.total_views}}</em></p>
 <p><em>{{object.post}}</em></p>
 {% endblock %}

@@ -18,7 +18,8 @@ Including another URLconf
 from django.urls import path
 
 from main.apps import MainConfig
-from main.views import ProductListView, ProductDetailView, ProductCreateView, ProductUpdateView, ProductDeleteView, ContactsCreateView, BlogCreateView, BlogDeleteView, BlogDetailView, BlogUpdateView, BlogListView
+from main.views import ProductListView, ProductDetailView, ProductCreateView, ProductUpdateView, ProductDeleteView, \
+    ContactsCreateView, BlogCreateView, BlogDeleteView, BlogUpdateView, BlogListView, BlogDetailView
 
 app_name = MainConfig.name
 
@@ -30,8 +31,9 @@ urlpatterns = [
     path('update/<int:pk>/', ProductUpdateView.as_view(), name='product_update'),
     path('delete/<int:pk>/', ProductDeleteView.as_view(), name='product_delete'),
     path('blog/', BlogListView.as_view(), name='blog'),
-    path('blog/<slug:slug>/', BlogDetailView.as_view(), name='blog_details'),
     path('blog/create/', BlogCreateView.as_view(), name='blog_create'),
+    path('blog/<slug:slug>/', BlogDetailView.as_view(), name='blog_details'),
     path('blog/update/<slug:slug>/', BlogUpdateView.as_view(), name='blog_update'),
     path('blog/delete/<slug:slug>/', BlogDeleteView.as_view(), name='blog_delete'),
+    #path('blog/redirect/<slug:slug>/', new_post_redirect, name='new_post_redirect'),
 ]
