@@ -1,6 +1,6 @@
 from django.db import models
 from django.urls import reverse
-from transliterate import slugify
+from pytils.translit import slugify
 
 # Create your models here.
 NULLABLE = {'blank': True, 'null': True}
@@ -73,6 +73,7 @@ class Blog(models.Model):
     def save(self, *args, **kwargs):
         self.slug = slugify(str(self.name))
         super().save(*args, **kwargs)
+
 
     def get_absolute_url(self):
         return reverse('main:blog', kwargs={'slug': self.slug})
