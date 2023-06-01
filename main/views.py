@@ -87,9 +87,6 @@ class BlogDetailView(generic.DetailView):
 class BlogCreateView(generic.CreateView):
     model = Blog
     fields = ("name", "post", "image")
-    #def new_post_redirect(request, slug):
-        #post_item = get_object_or_404(Blog, slug=slug)
-        #return redirect(reverse("main:post_item", args=[post_item.pk]))
 
 
 class BlogUpdateView(generic.UpdateView):

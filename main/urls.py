@@ -35,5 +35,4 @@ urlpatterns = [
     path('blog/<slug:slug>/', BlogDetailView.as_view(), name='blog_details'),
     path('blog/update/<slug:slug>/', BlogUpdateView.as_view(), name='blog_update'),
     path('blog/delete/<slug:slug>/', BlogDeleteView.as_view(), name='blog_delete'),
-    #path('blog/redirect/<slug:slug>/', new_post_redirect, name='new_post_redirect'),
 ]

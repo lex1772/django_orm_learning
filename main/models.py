@@ -1,5 +1,5 @@
 from django.db import models
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from pytils.translit import slugify
 
 # Create your models here.
@@ -71,12 +71,12 @@ class Blog(models.Model):
         self.save()
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(str(self.name))
+        self.slug = slugify(str(self.name))+str(self.id)
         super().save(*args, **kwargs)
 
 
     def get_absolute_url(self):
-        return reverse('main:blog', kwargs={'slug': self.slug})
+        return reverse_lazy('main:blog_details', kwargs={'slug': self.slug})
 
 
     class Meta:
