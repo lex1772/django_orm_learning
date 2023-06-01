@@ -7,10 +7,10 @@ register = template.Library()
 
 @register.simple_tag
 def media_path(string):
-    str_template = "img/{}".format(string)
+    str_template = "/img/{}".format(string)
     return mark_safe(f"{str_template}")
 
 
 @register.filter
 def mediapath(text):
-    return mark_safe("img/{}".format(text))
+    return mark_safe("/img/{}".format(text))
