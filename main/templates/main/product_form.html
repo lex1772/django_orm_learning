@@ -3,7 +3,7 @@
 {% block content %}
 <a class="btn btn-outline-dark" href="{%url 'main:home'%}" role="button">Назад</a>
       <div class="col-6">
-            <form method="post">
+            <form method="post" enctype=multipart/form-data>
             <div class="card">
                   <div class="card-header">
                         Продукт
@@ -13,7 +13,6 @@
                               {%csrf_token%}
                               {{form.as_p}}
                               <input type="submit" class="btn btn-outline-dark" value="{% if object %}Сохранить{% else %}Зарегистрировать{% endif %}">
-                        </form>
                   </div>
             </div>
       </div>
@@ -26,6 +25,9 @@
                               {{formset.management_form}}
                               {% for form in formset.forms %}
                                     {{form.as_p}}
+                                          {% for i in product.versions.all %}
+                                          {{ product.version.is_active }}
+                                          {% endfor %}
                               {% endfor %}
                   </div>
             </div>

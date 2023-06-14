@@ -3,7 +3,17 @@ from django import forms
 from main.models import Product, Version
 
 
-class ProductForm(forms.ModelForm):
+class StyleFormMixin:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field_name == "is_active":
+                pass
+            else:
+                field.widget.attrs['class'] = 'form-control'
+
+
+class ProductForm(StyleFormMixin, forms.ModelForm):
     class Meta:
         model = Product
         fields = ("product_name", "description", "category", "price",)
@@ -29,7 +39,20 @@ class ProductForm(forms.ModelForm):
         return cleaned_data
 
 
-class VersionForm(forms.ModelForm):
+class VersionForm(StyleFormMixin, forms.ModelForm):
     class Meta:
         model = Version
-        fields = ("number", "title",)
+        fields = ("number", "title", "is_active")
+
+    def clean_version(self):
+        cleaned_data = super(VersionForm, self)
+        checks = []
+        for form in self.cleaned_data:
+            check = form.cleaned_data['is_active']
+            checks.append(check)
+
+
+        if checks.count(True) > 1:
+            raise forms.ValidationError('Должна быть 1 активная версия')
+
+        return cleaned_data
