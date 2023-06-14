@@ -1,23 +1,35 @@
-from datetime import datetime
+from django import forms
 
-from django.forms import forms, CharField, ImageField, IntegerField, DateTimeField, ModelForm, ChoiceField
-
-from main.models import Category, Product
+from main.models import Product, Version
 
 
-class ProductForms(forms.Form):
-    CHOICE = [
-        ("сыр", "сыр"),
-        ("хлеб", "хлеб")
-    ]
-    product_name = CharField(max_length=100)
-    description = CharField(max_length=100)
-    image = ImageField(required=False)
-    category = ChoiceField(choices=CHOICE)
-    price = IntegerField()
-    creation_date = datetime.now()
-    last_modified = datetime.now()
+class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ["product_name", "description", "category", "price"]
-        category = Category
+        fields = ("product_name", "description", "category", "price",)
+
+    def clean_product_name(self):
+        cleaned_data = self.cleaned_data['product_name']
+
+        words = ["казино", "криптовалюта", "крипта", "биржа", "дешево", "бесплатно", "обман", "полиция", "радар"]
+
+        if cleaned_data.lower() in words:
+            raise forms.ValidationError('Запрещенный продукт')
+
+        return cleaned_data
+
+    def clean_description(self):
+        cleaned_data = self.cleaned_data['description']
+
+        words = ["казино", "криптовалюта", "крипта", "биржа", "дешево", "бесплатно", "обман", "полиция", "радар"]
+
+        if cleaned_data.lower() in words:
+            raise forms.ValidationError('Запрещенный продукт')
+
+        return cleaned_data
+
+
+class VersionForm(forms.ModelForm):
+    class Meta:
+        model = Version
+        fields = ("number", "title",)

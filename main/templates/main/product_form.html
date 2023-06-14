@@ -2,9 +2,33 @@
 
 {% block content %}
 <a class="btn btn-outline-dark" href="{%url 'main:home'%}" role="button">Назад</a>
-<form method="post">
-      {%csrf_token%}
-      {{form.as_p}}
-      <input type="submit" class="btn btn-outline-dark" value="{% if object %}Сохранить{% else %}Зарегистрировать{% endif %}">
-</form>
+      <div class="col-6">
+            <form method="post">
+            <div class="card">
+                  <div class="card-header">
+                        Продукт
+                  </div>
+                  <div class="card-body">
+                        <form method="post">
+                              {%csrf_token%}
+                              {{form.as_p}}
+                              <input type="submit" class="btn btn-outline-dark" value="{% if object %}Сохранить{% else %}Зарегистрировать{% endif %}">
+                        </form>
+                  </div>
+            </div>
+      </div>
+      <div class="col-6">
+            <div class="card">
+                  <div class="card-header">
+                        Версия
+                  </div>
+                  <div class="card-body">
+                              {{formset.management_form}}
+                              {% for form in formset.forms %}
+                                    {{form.as_p}}
+                              {% endfor %}
+                  </div>
+            </div>
+            </form>
+      </div>
 {% endblock %}

@@ -4,6 +4,7 @@ from datetime import datetime
 from django.core import serializers
 from django.core.paginator import Paginator, EmptyPage, InvalidPage, PageNotAnInteger
 from django.db.transaction import commit
+from django.forms import inlineformset_factory
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template import RequestContext
@@ -11,8 +12,8 @@ from django.urls import reverse_lazy, reverse
 from django.views.decorators.csrf import csrf_protect
 from django.views import generic
 
-from main.models import Product, Contacts, Category, Blog
-from .forms import ProductForms
+from main.models import Product, Contacts, Category, Blog, Version
+from .forms import ProductForm, VersionForm
 from .services import send_email
 
 
@@ -37,14 +38,53 @@ class ProductDetailView(generic.DetailView):
 
 class ProductCreateView(generic.CreateView):
     model = Product
-    fields = ("product_name", "description", "category", "price")
+    form_class = ProductForm
     success_url = reverse_lazy('main:home')
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        ParentFormset = inlineformset_factory(Product, Version, form=VersionForm, extra=1)
+        if self.request.method == 'POST':
+            formset = ParentFormset(self.request.POST, instance=self.object)
+        else:
+            formset = ParentFormset(instance=self.object)
+
+        context_data['formset'] = formset
+        return context_data
+
+    def form_valid(self, form):
+        context_data = self.get_context_data()
+        formset = context_data['formset']
+        self.object = form.save()
+
+        if formset.is_valid():
+            formset.instance = self.object
+            formset.save()
+        return super().form_valid(form)
 
 
 class ProductUpdateView(generic.UpdateView):
     model = Product
-    fields = ("product_name", "description", "category", "price")
+    form_class = ProductForm
     success_url = reverse_lazy('main:home')
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        ParentFormset = inlineformset_factory(Product, Version, form=VersionForm, extra=1)
+        if self.request.method == 'POST':
+            context_data['formset'] = ParentFormset(self.request.POST, instance=self.object)
+        else:
+            context_data['formset'] = ParentFormset(instance=self.object)
+
+        return context_data
+
+    def form_valid(self, form):
+        formset = self.get_context_data()['formset']
+        self.object = form.save()
+        if formset.is_valid():
+            formset.instance = self.object
+            formset.save()
+        return super().form_valid(form)
 
 
 class ProductDeleteView(generic.DeleteView):
