@@ -44,6 +44,3 @@ class VersionForm(StyleFormMixin, forms.ModelForm):
         model = Version
         fields = ("number", "title", "is_active")
 
-    def clean_version(self):
-        a = self.cleaned_data
-        print(a)
