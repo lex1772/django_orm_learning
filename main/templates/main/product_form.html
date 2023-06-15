@@ -25,9 +25,6 @@
                               {{formset.management_form}}
                               {% for form in formset.forms %}
                                     {{form.as_p}}
-                                          {% for i in product.versions.all %}
-                                          {{ product.version.is_active }}
-                                          {% endfor %}
                               {% endfor %}
                   </div>
             </div>

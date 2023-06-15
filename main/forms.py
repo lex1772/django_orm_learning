@@ -45,14 +45,5 @@ class VersionForm(StyleFormMixin, forms.ModelForm):
         fields = ("number", "title", "is_active")
 
     def clean_version(self):
-        cleaned_data = super(VersionForm, self)
-        checks = []
-        for form in self.cleaned_data:
-            check = form.cleaned_data['is_active']
-            checks.append(check)
-
-
-        if checks.count(True) > 1:
-            raise forms.ValidationError('Должна быть 1 активная версия')
-
-        return cleaned_data
+        a = self.cleaned_data
+        print(a)

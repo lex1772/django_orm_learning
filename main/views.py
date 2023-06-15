@@ -65,6 +65,7 @@ class ProductUpdateView(generic.UpdateView):
         if formset.is_valid():
             formset.instance = self.object
             formset.save()
+            print('fc_d', form.cleaned_data)
         else:
             print("form not valid")
         return super().form_valid(form)

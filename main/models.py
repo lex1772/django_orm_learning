@@ -94,3 +94,12 @@ class Version(models.Model):
 
     def __str__(self):
         return f"{self.title}"
+
+    def save(self, *args, **kwargs):
+        if self.is_active:
+            qs = type(self).objects.filter(is_active=True)
+            if self.pk:
+                qs = qs.exclude(pk=self.pk)
+            qs.update(is_active=False)
+
+        super(Version, self).save(*args, **kwargs)
