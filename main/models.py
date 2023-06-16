@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.urls import reverse, reverse_lazy
 from pytils.translit import slugify
@@ -95,11 +96,21 @@ class Version(models.Model):
     def __str__(self):
         return f"{self.title}"
 
-    def save(self, *args, **kwargs):
-        if self.is_active:
-            qs = type(self).objects.filter(is_active=True)
-            if self.pk:
-                qs = qs.exclude(pk=self.pk)
-            qs.update(is_active=False)
+    #def save(self, *args, **kwargs):
+        #if self.is_active:
+            #qs = type(self).objects.filter(is_active=True)
+            #if self.pk:
+                #qs = qs.exclude(pk=self.pk)
+            #qs.update(is_active=False)
 
-        super(Version, self).save(*args, **kwargs)
+        #super(Version, self).save(*args, **kwargs)
+
+    def clean(self) -> None:
+        super().clean()
+        if Version.objects.filter(
+                product=self.product,
+                is_active=True
+        ).exists():
+            raise ValidationError('You can set only one active version.')
+
+        return super().clean()
