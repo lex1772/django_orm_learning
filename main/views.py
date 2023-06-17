@@ -1,6 +1,7 @@
 import json
 from datetime import datetime
 
+from django import forms
 from django.core import serializers
 from django.core.paginator import Paginator, EmptyPage, InvalidPage, PageNotAnInteger
 from django.db.transaction import commit
@@ -62,12 +63,17 @@ class ProductUpdateView(generic.UpdateView):
         data = self.get_context_data()
         formset = data['formset']
         self.object = form.save()
+        isActive = False
+        for form in formset:
+            if form.is_valid():
+                if form.cleaned_data.get('is_active'):
+                    if isActive:
+                        form.add_error('is_active', forms.ValidationError('You can set only one active version.'))
+                        return super(ProductUpdateView, self).form_invalid(form)
+                    isActive = True
         if formset.is_valid():
             formset.instance = self.object
             formset.save()
-            print('fc_d', form.cleaned_data)
-        else:
-            print("form not valid")
         return super().form_valid(form)
 
 
