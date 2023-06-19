@@ -138,8 +138,8 @@ DEFAULT_FROM_EMAIL = 'lexa17721@yandex.ru'
 
 EMAIL_HOST = 'smtp.yandex.com'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = 'lexa17721@yandex.ru'
-EMAIL_HOST_PASSWORD = '60sobememomarJKFKK'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 
