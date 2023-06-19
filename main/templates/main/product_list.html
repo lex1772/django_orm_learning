@@ -11,17 +11,22 @@
     <div class="col-md-5 p-lg-5 mx-auto my-5">
       <h1 class="display-4 fw-normal">{{object.product_name}}</h1>
       <p class="lead fw-normal">{{object.description|truncatechars:20}}.</p>
+      <p class="lead fw-normal">{{object.author|default:'Без автора'}}.</p>
       <a class="btn btn-outline-secondary" href="{%url 'main:product' pk=object.pk %}">Узнать больше</a>
-      <a class="btn btn-outline-secondary" href="{%url 'main:product_update' pk=object.pk %}">Редактировать</a>
-      <a class="btn btn-outline-danger" href="{%url 'main:product_delete' pk=object.pk %}">Удалить</a>
+      {% if user.is_authenticated %}
+        <a class="btn btn-outline-secondary" href="{%url 'main:product_update' pk=object.pk %}">Редактировать</a>
+        <a class="btn btn-outline-danger" href="{%url 'main:product_delete' pk=object.pk %}">Удалить</a>
+      {% endif %}
     </div>
     {% endfor %}
   </div>
+  {% if user.is_authenticated %}
   <form method="POST">
   {% csrf_token %}
     <div class="mb-sm-3">
       <a href="{%url 'main:product_create'%}" class="btn btn-outline-secondary"> Зарегистрировать продукт</a>
   </form>
+  {% endif %}
 </main>
 {% include "main/includes/pagination.html" %}
 {% endblock %}

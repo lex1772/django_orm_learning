@@ -3,6 +3,8 @@ from django.db import models
 from django.urls import reverse, reverse_lazy
 from pytils.translit import slugify
 
+from config import settings
+
 # Create your models here.
 NULLABLE = {'blank': True, 'null': True}
 
@@ -27,6 +29,7 @@ class Product(models.Model):
     price = models.IntegerField(verbose_name='цена')
     creation_date = models.DateTimeField(auto_now_add=True, verbose_name='дата создания')
     last_modified = models.DateTimeField(auto_now=True, verbose_name='дата последнего изменения')
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, **NULLABLE, verbose_name='автор')
 
     is_active = models.BooleanField(default=True, verbose_name='активный')
 
@@ -82,6 +85,7 @@ class Blog(models.Model):
 
     class Meta:
         verbose_name = 'блог'
+        verbose_name_plural = 'блоги'
 
 class Version(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='versions')

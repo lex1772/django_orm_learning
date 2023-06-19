@@ -2,7 +2,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import path
 
 from users.apps import UsersConfig
-from users.views import RegisterView, ProfileView, ActivateAccount
+from users.views import RegisterView, ProfileView, ActivateAccount, generate_new_password
 
 app_name = UsersConfig.name
 
@@ -12,4 +12,5 @@ urlpatterns = [
     path('register/', RegisterView.as_view(), name='register'),
     path('profile/', ProfileView.as_view(), name='profile'),
     path('activate/<uidb64>/<token>/', ActivateAccount.as_view(), name='activate'),
+    path('profile/genpassword/', generate_new_password, name='generate_new_password'),
 ]

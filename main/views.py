@@ -2,6 +2,7 @@ import json
 from datetime import datetime
 
 from django import forms
+from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.paginator import Paginator, EmptyPage, InvalidPage, PageNotAnInteger
 from django.db.transaction import commit
@@ -10,6 +11,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template import RequestContext
 from django.urls import reverse_lazy, reverse
+from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
 from django.views import generic
 
@@ -37,12 +39,21 @@ class ProductDetailView(generic.DetailView):
     template_name = 'main/product.html'
 
 
+@method_decorator(login_required, name='dispatch')
 class ProductCreateView(generic.CreateView):
     model = Product
     form_class = ProductForm
     success_url = reverse_lazy('main:home')
 
+    def form_valid(self, form):
+        self.object = form.save()
+        self.object.author = self.request.user
+        self.object.save()
 
+        return super().form_valid(form)
+
+
+@method_decorator(login_required, name='dispatch')
 class ProductUpdateView(generic.UpdateView):
     model = Product
     form_class = ProductForm
@@ -77,6 +88,7 @@ class ProductUpdateView(generic.UpdateView):
         return super().form_valid(form)
 
 
+@method_decorator(login_required, name='dispatch')
 class ProductDeleteView(generic.DeleteView):
     model = Product
     fields = ("product_name", "description", "category", "price")

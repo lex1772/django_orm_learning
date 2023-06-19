@@ -8,6 +8,13 @@
                   <div class="card-header">
                         Регистрация
                   </div>
+                  {% if messages %}
+                        <ul class="messages">
+                        {% for message in messages|slice:":1" %}
+                              <li>{{ message }}</li>
+                        {% endfor %}
+                        </ul>
+                  {% endif %}
                   <div class="card-body">
                         <form method="post">
                               {%csrf_token%}

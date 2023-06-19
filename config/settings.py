@@ -134,10 +134,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/img/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'img')
 
+DEFAULT_FROM_EMAIL = 'lexa17721@yandex.ru'
+
 EMAIL_HOST = 'smtp.yandex.com'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST_USER = 'lexa17721@yandex.ru'
+EMAIL_HOST_PASSWORD = '60sobememomarJKFKK'
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 
