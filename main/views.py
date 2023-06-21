@@ -79,7 +79,7 @@ class ProductUpdateView(generic.UpdateView):
             if fo.is_valid():
                 if fo.cleaned_data.get('is_active'):
                     if isActive:
-                        fo.add_error('is_active', forms.ValidationError('You can set only one active version.'))
+                        form.add_error(None, 'You can set only one active version.')
                         return super(ProductUpdateView, self).form_invalid(form)
                     isActive = True
         if formset.is_valid():
