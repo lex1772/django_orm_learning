@@ -13,8 +13,10 @@
       <p class="lead fw-normal">{{object.description|truncatechars:20}}.</p>
       <p class="lead fw-normal">{{object.author|default:'Без автора'}}.</p>
       <a class="btn btn-outline-secondary" href="{%url 'main:product' pk=object.pk %}">Узнать больше</a>
-      {% if user.is_authenticated %}
+      {% if user == object.author or user.status_type == 'MODERATOR' %}
         <a class="btn btn-outline-secondary" href="{%url 'main:product_update' pk=object.pk %}">Редактировать</a>
+      {% endif %}
+      {% if perms.main.delete_product %}
         <a class="btn btn-outline-danger" href="{%url 'main:product_delete' pk=object.pk %}">Удалить</a>
       {% endif %}
     </div>

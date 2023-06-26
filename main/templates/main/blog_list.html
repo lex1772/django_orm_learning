@@ -12,8 +12,10 @@
       <img src="{{ MEDIA_URL }}/img/{{ object.image }}"class="img-fluid"><rect width="20%" height="20%"></rect>
       <p class="lead fw-normal">{{object.post|truncatechars:20}}.</p>
       <a class="btn btn-outline-secondary" href="{{object.slug}}">Читать полностью</a>
-      <a class="btn btn-outline-secondary" href="{%url 'main:blog_update' slug=object.slug %}">Редактировать</a>
-      <a class="btn btn-outline-danger" href="{%url 'main:blog_delete' slug=object.slug %}">Не показывать</a>
+      {% if user.status_type == 'CONTENT_MANAGER' %}
+        <a class="btn btn-outline-secondary" href="{%url 'main:blog_update' slug=object.slug %}">Редактировать</a>
+        <a class="btn btn-outline-danger" href="{%url 'main:blog_delete' slug=object.slug %}">Не показывать</a>
+      {% endif %}
     </div>
     {% endfor %}
   </div>

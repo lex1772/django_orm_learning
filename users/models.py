@@ -19,3 +19,19 @@ class User(AbstractUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
+
+    class StatusType(models.Model):
+        MODERATOR = "MODERATOR"
+        BASE_USER = "BASE_USER"
+        CONTENT_MANAGER = "CONTENT_MANAGER"
+        STATUS = [
+            (MODERATOR, "Moderator"),
+            (BASE_USER, "Base_user"),
+            (CONTENT_MANAGER, "Content_manager"),
+        ]
+
+    status_type = models.CharField(
+        max_length=50,
+        choices=StatusType.STATUS,
+        default=StatusType.BASE_USER,
+        verbose_name="роль")

@@ -3,11 +3,13 @@ from datetime import datetime
 
 from django import forms
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
 from django.core import serializers
+from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator, EmptyPage, InvalidPage, PageNotAnInteger
 from django.db.transaction import commit
 from django.forms import inlineformset_factory
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template import RequestContext
 from django.urls import reverse_lazy, reverse
@@ -39,8 +41,7 @@ class ProductDetailView(generic.DetailView):
     template_name = 'main/product.html'
 
 
-@method_decorator(login_required, name='dispatch')
-class ProductCreateView(generic.CreateView):
+class ProductCreateView(LoginRequiredMixin, generic.CreateView):
     model = Product
     form_class = ProductForm
     success_url = reverse_lazy('main:home')
@@ -53,11 +54,16 @@ class ProductCreateView(generic.CreateView):
         return super().form_valid(form)
 
 
-@method_decorator(login_required, name='dispatch')
-class ProductUpdateView(generic.UpdateView):
+class ProductUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Product
     form_class = ProductForm
     success_url = reverse_lazy('main:home')
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.author != self.request.user and not self.request.user.status_type == 'MODERATOR':
+            raise PermissionDenied
+        return self.object
 
 
     def get_context_data(self, **kwargs):
@@ -88,11 +94,14 @@ class ProductUpdateView(generic.UpdateView):
         return super().form_valid(form)
 
 
-@method_decorator(login_required, name='dispatch')
-class ProductDeleteView(generic.DeleteView):
+class ProductDeleteView(LoginRequiredMixin, UserPassesTestMixin, generic.DeleteView):
     model = Product
     fields = ("product_name", "description", "category", "price")
     success_url = reverse_lazy('main:home')
+    permission_required = 'main.delete_product'
+
+    def test_func(self):
+        return self.request.user.user_type == 'MODERATOR'
 
 
 class ContactsCreateView(generic.CreateView):
@@ -136,8 +145,17 @@ class BlogUpdateView(generic.UpdateView):
     fields = ("name", "post", "image")
     success_url = reverse_lazy('main:blog')
 
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if not self.request.user.status_type == 'CONTENT_MANAGER':
+            raise PermissionDenied
+        return self.object
 
-class BlogDeleteView(generic.DeleteView):
+
+class BlogDeleteView(generic.DeleteView, UserPassesTestMixin):
     model = Blog
     fields = ("name", "post", "image", "slug")
     success_url = reverse_lazy('main:blog')
+
+    def test_func(self):
+        return self.request.user.user_type == 'CONTENT_MANAGER'
