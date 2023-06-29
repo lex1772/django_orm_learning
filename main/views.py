@@ -5,6 +5,7 @@ from django import forms
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
 from django.core import serializers
+from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator, EmptyPage, InvalidPage, PageNotAnInteger
 from django.db.transaction import commit
@@ -17,9 +18,10 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect
 from django.views import generic
 
+from config import settings
 from main.models import Product, Contacts, Category, Blog, Version
 from .forms import ProductForm, VersionForm
-from .services import send_email
+from .services import send_email, get_cached_for_product_list
 
 
 # Create your views here.
@@ -29,6 +31,12 @@ class ProductListView(generic.ListView):
     extra_context = {
         'title': 'Продукты'
     }
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+
+        context_data['object'] = get_cached_for_product_list
+        return context_data
 
     def get_queryset(self):
         queryset = super().get_queryset()

@@ -11,12 +11,14 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 from django.conf.global_settings import AUTH_USER_MODEL, LOGIN_REDIRECT_URL
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+load_dotenv(BASE_DIR / '.env')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -45,6 +47,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    "django.middleware.cache.UpdateCacheMiddleware",
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -52,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.cache.FetchFromCacheMiddleware",
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -134,12 +138,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/img/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'img')
 
-DEFAULT_FROM_EMAIL = 'lexa17721@yandex.ru'
+DEFAULT_FROM_EMAIL = os.getenv('EMAIL_HOST_USER')
 
 EMAIL_HOST = 'smtp.yandex.com'
 EMAIL_PORT = 465
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 
@@ -147,3 +151,13 @@ AUTH_USER_MODEL = 'users.User'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = '/users/'
+
+CACHE_ENABLED = os.getenv('CACHE_ENABLED') == '0'
+
+if CACHE_ENABLED:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": os.getenv('CACHE_LOCATION'),
+        }
+    }
