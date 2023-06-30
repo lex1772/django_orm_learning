@@ -3,7 +3,7 @@ from django.core.mail import send_mail
 
 from config import settings
 from config.settings import EMAIL_HOST_USER
-from main.models import Product
+from main.models import Product, Category
 
 
 def send_email():
@@ -13,6 +13,7 @@ def send_email():
         EMAIL_HOST_USER,
         recipient_list=[]
     )
+
 
 def get_cached_for_product_list():
     if settings.CACHE_ENABLED:
@@ -25,3 +26,16 @@ def get_cached_for_product_list():
         object_list = Product.objects.all()
 
     return object_list
+
+
+def get_cached_for_category():
+    if settings.CACHE_ENABLED:
+        key = f'category_list'
+        category_list = cache.get(key)
+        if category_list is None:
+            category_list = Category.objects.all()
+            cache.set(key, category_list)
+    else:
+        category_list = Category.objects.all()
+
+    return category_list

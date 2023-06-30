@@ -21,7 +21,7 @@ from django.views import generic
 from config import settings
 from main.models import Product, Contacts, Category, Blog, Version
 from .forms import ProductForm, VersionForm
-from .services import send_email, get_cached_for_product_list
+from .services import send_email, get_cached_for_product_list, get_cached_for_category
 
 
 # Create your views here.
@@ -54,6 +54,12 @@ class ProductCreateView(LoginRequiredMixin, generic.CreateView):
     form_class = ProductForm
     success_url = reverse_lazy('main:home')
 
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+
+        context_data['object'] = get_cached_for_category
+        return context_data
+
     def form_valid(self, form):
         self.object = form.save()
         self.object.author = self.request.user
@@ -73,7 +79,6 @@ class ProductUpdateView(LoginRequiredMixin, generic.UpdateView):
             raise PermissionDenied
         return self.object
 
-
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
         ParentFormset = inlineformset_factory(Product, Version, form=VersionForm, extra=1)
@@ -81,6 +86,8 @@ class ProductUpdateView(LoginRequiredMixin, generic.UpdateView):
             context_data['formset'] = ParentFormset(self.request.POST or None, instance=self.object)
         else:
             context_data['formset'] = ParentFormset(instance=self.object)
+
+        context_data['object'] = get_cached_for_category
 
         return context_data
 
